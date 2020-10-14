@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use App\Services\DateService;
 
 class DateController extends Controller
 {
@@ -25,28 +25,8 @@ class DateController extends Controller
             return response()->json(['error' => collect($validator->errors())->collapse()->first()]);
         }
 
-        $date = Carbon::parse($request->input('date'));
+        $holidays = DateService::getDateHolidays($request->input('date'));
 
-        $holidays = collect(config('holidays'))->map(function ($holiday) use ($date) {
-            $holiday['start'] = Carbon::parse($holiday['start'])->setYear($date->format('Y'))->timestamp;
-
-            $holidayEnd = $holiday['start'];
-            if (isset($holiday['end']) AND ! empty($holiday['end'])) {
-                $holidayEnd = $holiday['end'];
-            }
-            $end = Carbon::parse($holidayEnd)->setYear($date->format('Y'));
-            if ($end->isWeekend()) {
-                $end = $end->addDay();
-            }
-
-            $holiday['end'] = $end->timestamp;
-
-            return $holiday;
-        });
-
-        $filteredHolidays = $holidays->where('start', '<=', $date->timestamp)
-            ->where('end', '>=', $date->timestamp)->pluck('name');
-
-        return response()->json(['holidays' => $filteredHolidays]);
+        return response()->json(['holidays' => $holidays]);
     }
 }
