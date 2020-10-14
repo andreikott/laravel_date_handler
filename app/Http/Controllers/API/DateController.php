@@ -34,13 +34,18 @@ class DateController extends Controller
             if (isset($holiday['end']) AND ! empty($holiday['end'])) {
                 $holidayEnd = $holiday['end'];
             }
-            $holiday['end'] = Carbon::parse($holidayEnd)->setYear($date->format('Y'))->timestamp;
+            $end = Carbon::parse($holidayEnd)->setYear($date->format('Y'));
+            if ($end->isWeekend()) {
+                $end = $end->addDay();
+            }
+
+            $holiday['end'] = $end->timestamp;
 
             return $holiday;
         });
 
-        $filteredHolidays = $holidays->where('start', '>=', $date->timestamp)
-            ->where('end', '<=', $date->timestamp)->pluck('name');
+        $filteredHolidays = $holidays->where('start', '<=', $date->timestamp)
+            ->where('end', '>=', $date->timestamp)->pluck('name');
 
         return response()->json(['holidays' => $filteredHolidays]);
     }
