@@ -19,5 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('/date')->group(function () {
-    Route::match(['get', 'post'], '/holidays', 'DateController@holidays');
+    Route::match(['get', 'post'], '/holidays', 'DateController@holidays')->name('holidays');
 });

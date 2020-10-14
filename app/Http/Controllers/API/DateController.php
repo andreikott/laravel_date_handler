@@ -16,12 +16,13 @@ class DateController extends Controller
      */
     public function holidays(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'date' => 'required|date',
-        ]);
+        $validator = Validator::make($request->all(),
+            ['date' => 'required|date',],
+            ['date.date' => 'The date is not a valid.']
+        );
 
         if ($validator->fails()) {
-            return response()->json(['message' => collect($validator->errors())->collapse()->first()], 400);
+            return response()->json(['error' => collect($validator->errors())->collapse()->first()]);
         }
 
         $date = Carbon::parse($request->input('date'));
