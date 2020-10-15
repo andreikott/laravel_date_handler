@@ -37,12 +37,9 @@
                             </span>
                         </div>
                         <input id="checkDateInput" type="text" class="form-control datepicker" placeholder="Specify the date" aria-label="Specify the date">
-                        <div class="input-group-append d-none d-sm-block">
+                        <div class="input-group-append">
                             <button id="checkDateButton" class="btn btn-primary" style="min-width: 130px;" type="button">Check</button>
                         </div>
-                    </div>
-                    <div class="btn-group shadow-sm w-100 mt-1 d-sm-none" role="group">
-                        <button id="checkDateButton" class="btn btn-primary" style="min-width: 130px;" type="button">Check</button>
                     </div>
                     <div id="resultBox" class="card mt-3 d-none">
                         <div class="card-body">
