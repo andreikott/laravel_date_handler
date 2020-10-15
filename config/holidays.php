@@ -29,7 +29,7 @@ return [
     ],
     [
         'name' => 'Monday of the 3rd week of January',
-        'start' => 1578873600,
+        'start' => 1579478400,
         'end' => null,
         'changing' => true
     ],
@@ -41,7 +41,7 @@ return [
     ],
     [
         'name' => 'Thursday of the 4th week of November',
-        'start' => 1606176000,
+        'start' => 1606348800,
         'end' => null,
         'changing' => true
     ]

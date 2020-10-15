@@ -61,6 +61,11 @@ class DateService
             $day = $monthData->where('weekOfMonth', $weekOfMonth)
                 ->where('dayOfWeek', $dayOfWeek)->collapse()->get('dayOfMonth');
 
+            if ( ! $day) {
+                $day = $monthData->where('weekOfMonth', --$weekOfMonth)
+                    ->where('dayOfWeek', $dayOfWeek)->collapse()->get('dayOfMonth');
+            }
+
             $start = $startInit->setDay($day)->setTime(0, 0);
 
             $holiday['start'] = $start->timestamp;
