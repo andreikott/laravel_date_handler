@@ -9,6 +9,13 @@ use App\Services\DateService;
 
 class DateController extends Controller
 {
+    public $dateService;
+
+    public function __construct(DateService $dateService)
+    {
+        $this->dateService = $dateService;
+    }
+
     /**
      * Holidays.
      *
@@ -25,7 +32,7 @@ class DateController extends Controller
             return response()->json(['error' => collect($validator->errors())->collapse()->first()]);
         }
 
-        $holidays = DateService::getDateHolidays($request->input('date'));
+        $holidays = $this->dateService->getDateHolidays($request->input('date'));
 
         return response()->json(['holidays' => $holidays]);
     }

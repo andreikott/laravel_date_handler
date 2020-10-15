@@ -13,13 +13,32 @@ use Carbon\CarbonPeriod;
 
 class DateService
 {
-    public static function getDateHolidays($date)
+    public $holidays;
+
+    public function __construct()
+    {
+        $this->holidays = collect(config('holidays'));
+    }
+
+    public function getDateHolidays($date)
     {
         $date = Carbon::parse($date);
 
-        $holidaysData = collect(config('holidays'));
+        $notChangingDateHolidays = $this->notChangingDateHolidays($date);
 
-        $notChangingDateHolidays = $holidaysData->where('changing', false)->map(function ($holiday) use ($date) {
+        $changingDateHolidays = $this->changingDateHolidays($date);
+
+        $holidays = $notChangingDateHolidays->merge($changingDateHolidays);
+
+        $filteredHolidays = $holidays->where('start', '<=', $date->timestamp)
+            ->where('end', '>=', $date->timestamp)->pluck('name');
+
+        return $filteredHolidays;
+    }
+
+    private function notChangingDateHolidays($date)
+    {
+        return $this->holidays->where('changing', false)->map(function ($holiday) use ($date) {
             $holiday['start'] = Carbon::parse($holiday['start'])->setYear($date->format('Y'))->timestamp;
 
             $holidayEnd = $holiday['start'];
@@ -35,8 +54,11 @@ class DateService
 
             return $holiday;
         });
+    }
 
-        $changingDateHolidays = $holidaysData->where('changing', true)->map(function ($holiday) use ($date) {
+    private function changingDateHolidays($date)
+    {
+        return $this->holidays->where('changing', true)->map(function ($holiday) use ($date) {
             $startRaw = Carbon::parse($holiday['start']);
 
             $weekOfMonth = $startRaw->weekOfMonth;
@@ -77,12 +99,5 @@ class DateService
 
             return $holiday;
         });
-
-        $holidays = $notChangingDateHolidays->merge($changingDateHolidays);
-
-        $filteredHolidays = $holidays->where('start', '<=', $date->timestamp)
-            ->where('end', '>=', $date->timestamp)->pluck('name');
-
-        return $filteredHolidays;
     }
 }
